@@ -1720,74 +1720,77 @@ if [ -s /root/.insecure_download ]; then
     INSECURE=`cat /root/.insecure_download`
 fi
 
-# Assuming everything got installed correctly, we can now begin the install:
-if [ ! -s ${LID_INFO} ] && [ "$1" = "auto" ]; then
-	if grep -m1 -q '^ip=' ${LID_INFO}; then
-		BIND_ADDRESS=--bind-address=`grep -m1 -q '^ip=' ${LID_INFO} | cut -d= -f2`
-		BIND_ADDRESS_IP=`grep -m1 -q '^ip=' ${LID_INFO} | cut -d= -f2`
-	else
-		BIND_ADDRESS=""
-	fi
-else
-	BIND_ADDRESS=--bind-address=$IP
-	BIND_ADDRESS_IP=$IP
-fi
+# Hexan
 
-if [ "$LAN" = "1" ] || [ "$LAN_AUTO" = "1" ]; then
-	BIND_ADDRESS=""
-fi
+# # Assuming everything got installed correctly, we can now begin the install:
+# if [ ! -s ${LID_INFO} ] && [ "$1" = "auto" ]; then
+# 	if grep -m1 -q '^ip=' ${LID_INFO}; then
+# 		BIND_ADDRESS=--bind-address=`grep -m1 -q '^ip=' ${LID_INFO} | cut -d= -f2`
+# 		BIND_ADDRESS_IP=`grep -m1 -q '^ip=' ${LID_INFO} | cut -d= -f2`
+# 	else
+# 		BIND_ADDRESS=""
+# 	fi
+# else
+# 	BIND_ADDRESS=--bind-address=$IP
+# 	BIND_ADDRESS_IP=$IP
+# fi
 
-if [ ! -z "${BIND_ADDRESS}" ] && [ ! -z "${BIND_ADDRESS_IP}" ]; then
-	if [ -x /usr/bin/ping ] || [ -x /bin/ping ]; then
-		if ! ping -c 1 -W 1 update.directadmin.com -I ${BIND_ADDRESS_IP} >/dev/null 2>&1; then
-			BIND_ADDRESS=""
-			LAN_AUTO=1
-			echo 1 > /root/.lan
-		fi
-	fi
-fi
+# if [ "$LAN" = "1" ] || [ "$LAN_AUTO" = "1" ]; then
+# 	BIND_ADDRESS=""
+# fi
 
-HTTP=https
-EXTRA_VALUE=""
-if [ "${INSECURE}" -eq 1 ]; then
-        HTTP=http
-        EXTRA_VALUE='&insecure=yes'
-fi
+# if [ ! -z "${BIND_ADDRESS}" ] && [ ! -z "${BIND_ADDRESS_IP}" ]; then
+# 	if [ -x /usr/bin/ping ] || [ -x /bin/ping ]; then
+# 		if ! ping -c 1 -W 1 update.directadmin.com -I ${BIND_ADDRESS_IP} >/dev/null 2>&1; then
+# 			BIND_ADDRESS=""
+# 			LAN_AUTO=1
+# 			echo 1 > /root/.lan
+# 		fi
+# 	fi
+# fi
 
-if [ "${GET_LICENSE}" = "0" ] && [ ! -s ${OS_OVERRIDE_FILE} ]; then
-	echo -n "${OS_NAME}" > ${OS_OVERRIDE_FILE}
-fi
+# HTTP=https
+# EXTRA_VALUE=""
+# if [ "${INSECURE}" -eq 1 ]; then
+#         HTTP=http
+#         EXTRA_VALUE='&insecure=yes'
+# fi
 
-if [ -e $OS_OVERRIDE_FILE ]; then
-	OS_OVERRIDE=`cat $OS_OVERRIDE_FILE | head -n1`
-	EXTRA_VALUE="${EXTRA_VALUE}&os=${OS_OVERRIDE}"
-fi
+# if [ "${GET_LICENSE}" = "0" ] && [ ! -s ${OS_OVERRIDE_FILE} ]; then
+# 	echo -n "${OS_NAME}" > ${OS_OVERRIDE_FILE}
+# fi
 
-if [ "${GET_LICENSE}" = "0" ]; then
-	EXTRA_VALUE="${EXTRA_VALUE}&skip_get_license=1"
-fi
+# if [ -e $OS_OVERRIDE_FILE ]; then
+# 	OS_OVERRIDE=`cat $OS_OVERRIDE_FILE | head -n1`
+# 	EXTRA_VALUE="${EXTRA_VALUE}&os=${OS_OVERRIDE}"
+# fi
 
-if ${DOWNLOAD_BETA}; then
-	APPEND_BETA="&channel=beta"
-else
-	APPEND_BETA=""
-fi
-$BIN_DIR/wget $WGET_OPTION -S --tries=5 --timeout=60 -O $DA_PATH/update.tar.gz $BIND_ADDRESS "${HTTP}://update.directadmin.com/cgi-bin/daupdate?uid=$CID&lid=$LID${EXTRA_VALUE}&redirect=ok${APPEND_BETA}"
+# if [ "${GET_LICENSE}" = "0" ]; then
+# 	EXTRA_VALUE="${EXTRA_VALUE}&skip_get_license=1"
+# fi
 
-if [ ! -e $DA_PATH/update.tar.gz ]; then
-	echo "Unable to download $DA_PATH/update.tar.gz";
-	exit 3;
-fi
+# if ${DOWNLOAD_BETA}; then
+# 	APPEND_BETA="&channel=beta"
+# else
+# 	APPEND_BETA=""
+# fi
+# $BIN_DIR/wget $WGET_OPTION -S --tries=5 --timeout=60 -O $DA_PATH/update.tar.gz $BIND_ADDRESS "${HTTP}://update.directadmin.com/cgi-bin/daupdate?uid=$CID&lid=$LID${EXTRA_VALUE}&redirect=ok${APPEND_BETA}"
 
-COUNT=`head -n 4 $DA_PATH/update.tar.gz | grep -c "* You are not allowed to run this program *"`;
-if [ $COUNT -ne 0 ]; then
-	echo "";
-	echo "You are not authorized to download the update package with that client id and license id for this IP address. Please email sales@directadmin.com";
-	exit 4;
-fi
+# if [ ! -e $DA_PATH/update.tar.gz ]; then
+# 	echo "Unable to download $DA_PATH/update.tar.gz";
+# 	exit 3;
+# fi
+
+# COUNT=`head -n 4 $DA_PATH/update.tar.gz | grep -c "* You are not allowed to run this program *"`;
+# if [ $COUNT -ne 0 ]; then
+# 	echo "";
+# 	echo "You are not authorized to download the update package with that client id and license id for this IP address. Please email sales@directadmin.com";
+# 	exit 4;
+# fi
+
+# Hexan
 
 cd $DA_PATH;
-tar xzf update.tar.gz
 
 if [ ! -e $DA_PATH/directadmin ]; then
 	echo "Cannot find the DirectAdmin binary.  Extraction failed";
