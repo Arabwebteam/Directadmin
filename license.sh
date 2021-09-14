@@ -28,7 +28,7 @@ else
 	$PERL -pi -e "s/^IPADDR=.*/IPADDR=$IP_ADDR/" $VENET
 	$PERL -pi -e 's/^ethernet_dev=.*/ethernet_dev=venet0:100/' $DA_CONF_FILE
 fi
-service network restart
+systemctl restart NetworkManager.service
 mv $DA_CONF/license.key $DA_CONF/license.old
 rm -rf $DA_CONF/license.key
 wget -O $DA_CONF/license.key $URL
